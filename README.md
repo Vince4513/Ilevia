@@ -1,6 +1,6 @@
 # Ilevia
 
-The goal is to create a website that will be able to make a real estate monitoring of every layout that has been done on some housing.
+The goal is to create a website that will be able to allow an user to buy a ticket, validate one and see the statistics of the database.
 
 ## To do 
 1. Update the login page / registration page
