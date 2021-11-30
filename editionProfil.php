@@ -7,14 +7,17 @@ include("connexion.php");
 $con=connect();
 
 if(isset($_SESSION['id'])){
-    $reqUser = $dbh->prepare("SELECT * FROM member WHERE num_member = ?");
-    $reqUser->execute(array($_SESSION['id']));
-    $user = $reqUser->fetch();
+
+    $resultat = pg_query($con,"SELECT * FROM utilisateur WHERE numu =".$_SESSION['id']);
+    if (!$resultat){ 
+	echo "Probleme lors du lancement de la requete";
+	exit;
+	}
+    $userInfo = pg_fetch_array($resultat,0,PGSQL_ASSOC);
 
     if(isset($_POST['newPseudo']) AND !empty($_POST['newPseudo']) AND $_POST['newPseudo'] != $user['user']){
         $newPseudo = htmlspecialchars($_POST['newPseudo']);
-        $insertPseudo = $dbh->prepare("UPDATE member SET user = ? WHERE num_member = ?");
-        $insertPseudo->execute(array($newPseudo, $_SESSION['id']));
+        $insertPseudo = pg_query($con,"UPDATE member SET nom =".$newPseudo." WHERE numu=".$_SESSION['id']);
         header("Location: profil.php?id=".$_SESSION['id']);
     }
 
@@ -55,7 +58,7 @@ if(isset($_SESSION['id'])){
 
 <html>
     <head>
-        <title>Monitoring Real Estate</title>
+        <title>ILEVIA</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -71,18 +74,18 @@ if(isset($_SESSION['id'])){
                         <form action="" class="form form-edit" method="POST">
                             <div class="row">
                                 <div class="input-group">
-                                    <input type="text" name="newPseudo" value="<?php echo $user['user']; ?>" />
+                                    <input type="text" name="newPseudo" value="<?php echo $user['nom']; ?>" />
                                     <label for="newPseudo">Pseudo : </label>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col-left">
                                     <div class="input-group">
-                                        <input type="email" name="newEmail" value="<?php echo $user['email']; ?>" />
+                                        <input type="email" name="newEmail" value="<?php echo $user['prenom']; ?>" />
                                         <label for="newEmail">Email : </label>
                                     </div>
                                     <div class="input-group">
-                                        <input type="email" name="newEmail2" value="<?php echo $user['email'];?>" />
+                                        <input type="email" name="newEmail2" value="<?php echo $user['dateNaiss'];?>" />
                                         <label for="newEmail2">Confirm email : </label>
                                     </div>
                                 </div>
@@ -103,10 +106,10 @@ if(isset($_SESSION['id'])){
                     </div>
                     <div class="profilInfo-col">
                         <h2>Informations</h2>
-                        <p>Pseudo : <?php echo $user['user']; ?></p>
-                        <p>Mail : <?php echo $user['email']; ?></p>
+                        <p>Identité : <?php echo $userInfo['nom']." ".$userInfo['prenom']; ?></p>
+                        <p>CAF : <?php echo $userInfo['caf']; ?></p>
                         <?php 
-                        if(isset($_SESSION['id']) AND $user['num_member'] == $_SESSION['id']){ ?> 
+                        if(isset($_SESSION['id']) AND $userInfo['numu'] == $_SESSION['id']){ ?> 
                         <?php } ?>
                     </div>
                 </div>

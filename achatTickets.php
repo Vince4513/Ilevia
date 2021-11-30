@@ -1,3 +1,4 @@
+<?php session_start();?>
 <html>
 <head>
 	<title>ILEVIA</title>

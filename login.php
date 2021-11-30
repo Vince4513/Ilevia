@@ -7,21 +7,30 @@ include("connexion.php");
 $con=connect();
 
 if(isset($_POST['formConnexion'])){
-    $userConnect = htmlspecialchars($_POST['loginUser']);
-    $pwConnect = sha1($_POST['loginPassword']);
+    echo $nameConnect = htmlspecialchars($_POST['loginUser']);
+    echo $lastnameConnect = htmlspecialchars($_POST['loginPassword']);
     
-    if(!empty($userConnect) AND !empty($pwConnect)){
+    if(isset($nameConnect) AND isset($lastnameConnect)){
         
-        $reqUser = $dbh->prepare("SELECT * FROM member WHERE pw = ? AND user = ? ");
-        $reqUser->execute(array($pwConnect, $userConnect));
-        $userExist = $reqUser->rowCount();
-        
+        $sql="SELECT * FROM utilisateur WHERE prenom ='".$lastnameConnect."' AND numu =".$nameConnect;
+        $resultat=pg_query($sql);
+
+	//(toujours)verifier que la requete a fonctionné
+	if (!$resultat)
+		{ echo "Probleme lors du lancement de la requete";
+		exit;
+		}
+		
+	//copie de la premiere ligne de resulat dans le tableau ligne
+	$userExist=pg_num_rows($resultat);
+	
         if($userExist == 1){
 
-            $userInfo = $reqUser->fetch();
-            $_SESSION['id'] = $userInfo['num_member'];
-            $_SESSION['username'] = $userInfo['user'];
-            $_SESSION['email'] = $userInfo['email'];
+            $userInfo = pg_fetch_array($resultat,0,PGSQL_ASSOC);
+            $_SESSION['id'] = $userInfo['numu'];
+            $_SESSION['name'] = $userInfo['nom'];
+            $_SESSION['lastname'] = $userInfo['prenom'];
+            $_SESSION['caf'] = $userInfo['caf'];
             header("Location: profil.php?id=".$_SESSION['id']);
         }
         else{
@@ -52,11 +61,11 @@ if(isset($_POST['formConnexion'])){
         <h2>Login</h2>
         <div class="input-group">
           <input type="text" name="loginUser" id="loginUser" required>
-          <label for="loginUser">User Name</label>
+          <label for="loginUser">Identifiant</label>
         </div>
         <div class="input-group">
           <input type="password" name="loginPassword" id="loginPassword" required>
-          <label for="loginPassword">Password</label>
+          <label for="loginPassword">Prenom</label>
         </div>
         <input type="submit" value="Login" name="formConnexion" class="submit-btn">
         

@@ -1,24 +1,25 @@
 <?php
 session_start();
 
-try {
-$dbh = new PDO('mysql:host=localhost;dbname=MRE', 'root', '');
-}
-catch (PDOException $e) {
-print "Erreur !: " . $e->getMessage() . "<br/>";
-die();
-}
+//Connexion a la base
+include("connexion.php");
+$con=connect();
 
 if(isset($_GET['id']) AND $_GET['id'] > 0){
     $getId = intval($_GET['id']);
-    $reqUser = $dbh->prepare("SELECT * FROM member WHERE num_member = ?");
-    $reqUser->execute(array($getId));
-    $userInfo = $reqUser->fetch();
+    $sql ="SELECT * FROM utilisateur WHERE numu =".$getId;
+    $resultat=pg_query($sql);
+    
+    if (!$resultat){ 
+    	echo "Probleme lors du lancement de la requete";
+	exit;
+	}
+    $userInfo = pg_fetch_array($resultat,0,PGSQL_ASSOC);
 ?>
 
 <html>
     <head>
-        <title>Monitoring Real Estate</title>
+        <title>ILEVIA</title>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -29,19 +30,21 @@ if(isset($_GET['id']) AND $_GET['id'] > 0){
             <div class="profil">
                 <div class="row">
                     <div class="profilWindow-col">
-                        <h2>Profil de <?php echo $userInfo['user']; ?></h2>
+                        <h2>Profil de <?php echo $userInfo['nom']." ".$userInfo['prenom']; ?></h2>
                         <p>Bienvenue sur votre compte !</p>
                         <?php 
-                        if(isset($_SESSION['id']) AND $userInfo['num_member'] == $_SESSION['id']){ ?>
-                            <a class="profil-btn" href="research-housing.php">Accéder à la recherche de biens</a>
+                        if(isset($_SESSION['id']) AND $userInfo['numu'] == $_SESSION['id']){ ?>
+                            <a class="profil-btn" href="achatTickets.php?id=".<?php echo $_SESSION['id']?>>Acheter un ticket</a>
+                            <a class="profil-btn" href="validation.php?id=".<?php echo $_SESSION['id']?>">Valider un titre de transport</a>
+                            <a class="profil-btn" href="statistiques.php?id=".<?php echo $_SESSION['id']?>">Afficher les statistiques</a>
                         <?php } ?>
                     </div>
                     <div class="profilInfo-col">
                         <h2>Informations</h2>
-                        <p>Pseudo : <?php echo $userInfo['user']; ?></p>
-                        <p>Mail : <?php echo $userInfo['email']; ?></p>
+                        <p>Identité : <?php echo $userInfo['nom']." ".$userInfo['prenom']; ?></p>
+                        <p>CAF : <?php echo $userInfo['caf']; ?></p>
                         <?php 
-                        if(isset($_SESSION['id']) AND $userInfo['num_member'] == $_SESSION['id']){ ?> 
+                        if(isset($_SESSION['id']) AND $userInfo['numu'] == $_SESSION['id']){ ?> 
                             <a class="profil-btn" href="editionProfil.php">Editer mon profil</a>
                             <a class="profil-btn" href="deconnexion.php">Sign out</a>
                         <?php } ?>
