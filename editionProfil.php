@@ -15,43 +15,19 @@ if(isset($_SESSION['id'])){
 	}
     $userInfo = pg_fetch_array($resultat,0,PGSQL_ASSOC);
 
-    if(isset($_POST['newPseudo']) AND !empty($_POST['newPseudo']) AND $_POST['newPseudo'] != $user['user']){
-        $newPseudo = htmlspecialchars($_POST['newPseudo']);
-        $insertPseudo = pg_query($con,"UPDATE member SET nom =".$newPseudo." WHERE numu=".$_SESSION['id']);
+    if(isset($_POST['newName']) AND $_POST['newName'] != $userInfo['nom']){
+        $newName = htmlspecialchars($_POST['newName']);
+        $insertName = pg_query($con,"UPDATE utilisateur SET nom ='".$newName."' WHERE numu=".$_SESSION['id']);
         header("Location: profil.php?id=".$_SESSION['id']);
     }
 
-    if(isset($_POST['newEmail']) AND !empty($_POST['newEmail']) AND $_POST['newEmail'] != $user['email']){
-        $newEmail = htmlspecialchars($_POST['newEmail']);
-        
-        $req_email = $dbh->prepare("SELECT * FROM member WHERE email = ?");
-        $req_email->execute(array($newEmail));
-        $emailExist = $req_email->rowCount();
-
-        if($emailExist == 0) {
-            $insertEmail = $dbh->prepare("UPDATE member SET email = ? WHERE num_member = ?");
-            $insertEmail->execute(array($newEmail, $_SESSION['id']));
-            header("Location: profil.php?id=".$_SESSION['id']);
-        }
-        else{
-            $msg = "Address already used !";
-        }
+    if(isset($_POST['newCaf']) AND $_POST['newCaf'] != $userInfo['caf']){
+        $newCaf = htmlspecialchars($_POST['newCaf']);
+        $insertCaf = pg_query($con,"UPDATE utilisateur SET caf =".$newCaf." WHERE numu =".$_SESSION['id']);
+        header("Location: profil.php?id=".$_SESSION['id']);
     }
-
-    if(isset($_POST['newPw']) AND !empty($_POST['newPw']) AND isset($_POST['newPw2']) AND !empty($_POST['newPw2'])){
-        $newPw = sha1($_POST['newPw']);
-        $newPw2 = sha1($_POST['newPw2']);
-
-        if($newPw == $newPw2){
-            $insertPw = $dbh->prepare("UPDATE member SET pw = ? WHERE num_member = ?");
-            $insertPw->execute(array($newPw, $_SESSION['id']));
-            header("Location: profil.php?id=".$_SESSION['id']);
-        }
-        else{
-            $msg = "Your passwords are differents";
-        }
-    }
-    if(isset($_POST['newPseudo']) AND $_POST['newPseudo'] == $_SESSION['username']){
+    
+    if(isset($_POST['newName']) AND $_POST['newName'] == $userInfo['nom'] AND isset($_POST['newCaf']) AND $_POST['newCaf'] == $userInfo['caf']){
         header("Location: profil.php?id=".$_SESSION['id']);
     }
 ?>
@@ -73,30 +49,16 @@ if(isset($_SESSION['id'])){
                         
                         <form action="" class="form form-edit" method="POST">
                             <div class="row">
-                                <div class="input-group">
-                                    <input type="text" name="newPseudo" value="<?php echo $user['nom']; ?>" />
-                                    <label for="newPseudo">Pseudo : </label>
-                                </div>
-                            </div>
-                            <div class="row">
                                 <div class="col-left">
                                     <div class="input-group">
-                                        <input type="email" name="newEmail" value="<?php echo $user['prenom']; ?>" />
-                                        <label for="newEmail">Email : </label>
-                                    </div>
-                                    <div class="input-group">
-                                        <input type="email" name="newEmail2" value="<?php echo $user['dateNaiss'];?>" />
-                                        <label for="newEmail2">Confirm email : </label>
+                                        <input type="text" name="newName" value="<?php echo $userInfo['nom']; ?>" />
+                                        <label for="newName">Nom : </label>
                                     </div>
                                 </div>
                                 <div class="col-right">
                                     <div class="input-group">
-                                        <input type="password" name="newPw" />
-                                        <label for="newPw">Password : </label>
-                                    </div>
-                                    <div class="input-group">
-                                        <input type="password" name="newPw2" />
-                                        <label for="newPw2">Confirm password : </label>
+                                        <input type="text" name="newCaf" value="<?php echo $userInfo['caf'];?>" />
+                                        <label for="newCaf">CAF : </label>
                                     </div>
                                 </div>
                             </div>

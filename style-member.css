@@ -3,6 +3,9 @@
   padding: 0;
   font-family: 'Poppins', sans-serif;
 }
+body{
+  background: rgb(220, 220, 220,0.5);
+}
 .header{
   position: relative; 
   min-height: 100vh;
@@ -41,14 +44,6 @@
   transform-origin: bottom left;
   border-radius: 10px;
   pointer-events: none;
-}
-.form img {
-  position: absolute;
-  top: -50px;
-  left: calc(50% - 50px);
-  width: 100px;
-  background: rgba(255,255,255, 0.8);
-  border-radius: 50%;
 }
 .form h2 {
   text-align: center;
@@ -100,40 +95,10 @@
     border-radius: 5px;
     cursor: pointer;
   }
-  .forgot-pw {
-    color: inherit;
-  }
   .account{
     color: inherit;
   }
 
-  #forgot-pw {
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 0;
-    z-index: 1;
-    background: #fff;
-    opacity: 0;
-    transition: 0.6s;
-  }
-  #forgot-pw:target {
-    height: 100%;
-    opacity: 1;
-  }
-  .close {
-    position: absolute;
-    right: 1.5rem;
-    top: 0.5rem;
-    font-size: 2rem;
-    font-weight: 900;
-    text-decoration: none;
-    color: inherit;
-  }
   .registration-btn {
     margin-right: 5%;
     margin-bottom: -3%;
@@ -172,96 +137,6 @@ margin-top: -10%;
   text-align: left;
 }
 
-/*-------------- Progress bar ----------------*/
-:root{
-  --step-color-active: #2fffee;
-  --step-color-disabled: #9e9d9d;
-}
-.container{
-  display: flex;
-  width: 100%;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-.progress-steps-container{
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-between;
-  position: relative;
-  max-width: 100%;
-  width: 50%;
-  margin: 15px 0;
-}
-.progress-steps-container .step-number{
-  width: 40px;
-  height: 40px;
-  border: 3px solid var(--step-color-disabled);
-  border-radius: 50%;
-  font: 16px consolas;
-  padding-top: 2.5%;
-  text-align: center;
-  display: inline-block;
-  justify-content: center;
-  align-items: center;
-  background: #fff;
-  z-index: 1;
-  transition: border 0.4s ease-in;
-  cursor: pointer;
-}
-.progress-steps-container .step-number p{
-  position: absolute;
-  display: flex;
-  width: 80px;
-  text-align: center;
-  transform:translate(-10px, 20px);
-  font-size: 12px;
-  font-weight: 500;
-}
-.step-number.active {
-  border: 3px solid var(--step-color-active);
-  color: var(--step-color-active);
-}
-.progress-steps-container::before{
-  content: '';
-  position: absolute;
-  width: 100%;
-  height: 3px;
-  top: 50%;
-  left: 0;
-  transform: translate(0, -50%);
-  background-color: var(--step-color-disabled);
-  z-index: -1;
-}
-.step-progression{
-  position: absolute;
-  width: 0%;
-  height: 3px;
-  top: 50%;
-  left: 0;
-  transform: translate(0, -50%);
-  background-color: var(--step-color-active);
-  transition: width 0.4s ease-in;
-  z-index: 1;
-}
-button {
-  margin: 0 5px;
-}
-.bar-btn{
-  position: relative;
-  border-radius: 20px;
-  width: 100px;
-  height: 40px;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  background: #2fffee;
-  color: #111;
-}
-.bar-btn:hover{
-  background: #1fb6a9;
-}
-
 /*------------- Profil -----------------*/
 .profil{
   width: 100%;
@@ -272,6 +147,16 @@ h2{
   color: antiquewhite;
   font-size: 30px;
   font-weight: 600;
+}
+h3{
+  text-align: center;
+  color: antiquewhite;
+  font-size: 25px;
+  font-weight: 600;
+}
+table{
+  margin: 0 10% 0 10%;
+  width:80%;
 }
 p{
   color: #fff;
@@ -286,7 +171,7 @@ p{
 }
 .profilWindow-col{
   flex-basis: 50%;
-  background: rgb(53, 67, 112);
+  background: rgb(101, 108, 109);
   border-radius: 10px;
   margin-left: 10%;
   margin-right: 10%;
@@ -295,7 +180,7 @@ p{
 }
 .profilInfo-col{
   flex-basis: 30%;
-  background: rgb(53, 67, 112);
+  background: rgb(101, 108, 109);
   border-radius: 10px 0 0 10px;
   padding: 20px 12px;
   box-sizing: border-box;
@@ -303,7 +188,7 @@ p{
 .profil-btn{
   position: relative;
   border-radius: 20px;
-  padding: 6px 5px;
+  padding: 6px 20px;
   text-decoration: none;
   height: 40px;
   border: none;
@@ -325,6 +210,19 @@ p{
 }
 .form-edit::before{
   content: none;
+}
+.redirection-btn table {
+  border: none;
+}
+.redirection-btn td{
+ width: 25%;
+ 
+}
+table {
+  align-items: center;
+  border: 1px solid white;
+  text-align:center;
+  color: white;
 }
 @media(max-width: 700px){
   .row{

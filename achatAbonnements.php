@@ -8,6 +8,10 @@
 		echo "Probleme connexion à la base";
 		exit;
 	}
+	
+	if(isset($_SESSION['id'])){
+		$result = pg_query($con,"select numabo from utilisateur where numu=".$_SESSION['id']);
+	}
 ?>
 
 <html>
@@ -35,57 +39,46 @@
 				    </ul>
 			</div>
 		</nav>
-    <h1>Ticket</h1>
+    	<h1>Abonnement</h1>
 	</section>
 
 <!-- Course -->
 
 	<section class="course">
-		<h1>Acheter un ticket...</h1>
-		<p>Select the type of ticket you want and the quantity needed right after.</p></br>
+		<h1>Acheter un abonnement</h1>
+		<p>Pour souscrire à un abonnement, vous devez être connecté à votre compte.</p></br>
 		
-		<?php if(isset($_SESSION['id'])){ ?> 
-		
-		<div class="row">
-		    <?php
-			$sql = "select * from ticket order by numtick asc;";
-			$resultat = pg_query($sql);
-			$ligne=pg_fetch_array($resultat);
-			if (!$resultat) {
-				echo "Probleme lors du lancement de la requête";
-				exit;
+		<?php if(isset($_SESSION['id'])){
+			$ligne = pg_fetch_array($result);
+				
+			if(isset($ligne['numabo'])){
+		  	  echo "<p>Vous disposez déjà d'un abonnement sur votre carte</p>";
 			}
-			echo "<p><form action='achatTermine.php' method = 'post'><select class='red-btn' name = 'tickets'>";
-			while($ligne) {
-				echo"<option value=".$ligne['numtick'].">".$ligne['libelle']." : ".sprintf('%.2f',$ligne['prix'])."€";
-				if (isset($ligne['prix10'])){
-					echo ". Prix à la dizaine : ".sprintf('%.2f',$ligne['prix10'])."€";					}
-				echo"</option><br>";
+			else {?> 
+		
+			<div class="row">
+			    <p>Selectionnez le type d'abonnement souhaité.</p>
+			    <?php
+				$sql = "select * from abonnement order by numabo asc;";
+				$resultat = pg_query($sql);
 				$ligne=pg_fetch_array($resultat);
+				if (!$resultat) {
+					echo "Probleme lors du lancement de la requête";
+					exit;
+				}
+				echo "<p><form action='abonnementTermine.php' method = 'post'><select class='red-btn' name = 'abonnements'>";
+				while($ligne) {
+					echo"<option value=".$ligne['numabo'].">".$ligne['typeabo']." : ".sprintf('%.2f',$ligne['prix'])."€";
+					echo"</option><br>";
+					$ligne=pg_fetch_array($resultat);
+				}
+				echo "</select>
+				<input type='submit' class='red-btn' name='submit' value='Acheter'></form>";
 			}
-			echo "</select>
-			<input type='number' class='red-btn' name='nombre' value='1' min='1'><br/><br/>
-			<input type='submit' class='red-btn' name='submit' value='Acheter'></form>";
+		     }
 			?>
 		   </p>
 		</div>
-		<?php } else {
-			echo "<form action='' method = 'post' name='carte'>
-			<label class='red-btn'>Selectionner votre numéro de carte anonyme :</label>
-			<input class='red-btn' type='text' placeholder='110200'>
-			<input class='red-btn' type='submit' value='Verifier'>
-			</form>";
-			echo "<p>Pas de carte ? <a href='achatTickets.php' class='red-btn'>Créez en une</a></p>";
-			
-			extract($_POST);
-	  		if(isset($carte)) {
-	  		  $result = pg_query($con,"select numu from utilisateur where nom is null and numu=".$carte[0]);
-	  		  echo $carte[0];
-	  		  $ligne = pg_fetch_array($result);
-	  		  echo "Session :".$_SESSION['id'] = ligne[0];
-	  		  echo "Get : ".$_GET['id'] = ligne[0];
-	  		}
-		} ?>
 	  </section>
 
 <!-- Footer -->

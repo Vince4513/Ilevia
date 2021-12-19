@@ -8,12 +8,12 @@ $con=connect();
 
 if(isset($_POST['formInscription'])) {
 
-  $lastname = htmlspecialchars($_POST['lastName']);
-  $firstname = htmlspecialchars($_POST['firstName']);
-  $dateNaiss = htmlspecialchars($_POST['datenaiss']);
-  $caf = htmlspecialchars($_POST['caf']);
+  echo $lastname = htmlspecialchars($_POST['lastName']);
+  echo $firstname = htmlspecialchars($_POST['firstName']);
+  echo $dateNaiss = htmlspecialchars($_POST['datenaiss']);
+  echo $caf = htmlspecialchars($_POST['caf']);
 
-    if(!empty($_POST['lastName']) AND !empty($_POST['firstName']) AND !empty($_POST['datenaiss']) AND !empty($_POST['caf'])){
+    if(!empty($_POST)){
        
         $userLength = strlen($lastname);
         if($userLength <= 255){
@@ -40,7 +40,7 @@ if(isset($_POST['formInscription'])) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <title>Monitoring Real Estate</title>
+ <title>ILEVIA</title>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -53,7 +53,7 @@ if(isset($_POST['formInscription'])) {
   <div class="header">
     <div class="login-wrapper">
       <form action="" class="form form-reg" method="POST">
-        <h2>Registration</h2>
+        <h2>Inscription</h2>
 
         <!---------- Input fields --------------->
         <div class="row">
@@ -81,8 +81,14 @@ if(isset($_POST['formInscription'])) {
           </div>
         </div>
         <div align="center"><?php if(isset($erreur)){ echo $erreur; } ?></div>
-        <input type="submit" value="Registration" name="formInscription" class="submit-btn registration-btn">
-        <a href="login.php" class="account">Already have an account?</a>
+        <input type="submit" value="Inscription" name="formInscription" class="submit-btn registration-btn">
+
+        <div class="link-col-r">
+          <a href="login.php" class="account">Déjà un compte ?</a>
+        </div>
+        <div class="link-col-r">
+          <a href="index.php" class="account">Menu</a>
+        </div>
       </form>
     </div>
   </div>
