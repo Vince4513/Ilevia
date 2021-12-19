@@ -1,0 +1,3 @@
+Lien index.php via bouton perd la connexion
+Achat de ticket : réaliser les requêtes SQL
+Edition de profil 
