@@ -29,7 +29,7 @@
 	       			    <ul>
 					    <li><a href='index.php'>MENU</a></li>
 					    <li><a href='achatTickets.php'>TICKET</a></li>
-					    <li><a href='achatAbonnements.php'>ABONNEMENT</a></li>
+					    <li><a href='achatAbonnement.php'>ABONNEMENT</a></li>
 					    <li><a href='validation.php'>VALIDATION</a></li>
 					    <li><a href='statistiques.php'>STATISTIQUES</a></li>
 					    <li><a href='login.php'><i class='fa fa-user'></i></a></li>
@@ -49,6 +49,7 @@
 		
 		$libelle = $ligne['typeabo'];
 		$prix = $ligne['prix'];
+		$duree = $ligne['duree'];
 		
 		$sql = "update utilisateur set numabo=".$abonnements."where numu=".$_SESSION['id'];
 		$resultat = pg_query($sql);
@@ -56,6 +57,16 @@
 		if (!$resultat) {
 			echo "Probleme lors du lancement de la requête";
 			exit;
+		}
+		
+		if (isset($duree)) {
+			$sql = "update utilisateur set datefinabo=now()+".$duree."*(interval '1 day') where numu=".$_SESSION['id'];
+			$resultat = pg_query($sql);
+			//(toujours)verifier que la requete a fonctionné
+			if (!$resultat) {
+				echo "Probleme lors du lancement de la requête";
+				exit;
+			}
 		}
 		
 		echo "<h3>Vous avez dépensé ".sprintf('%.2f',$prix)."€ pour acheter l'abonnement : ".$libelle."</h3>";

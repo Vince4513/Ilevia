@@ -28,7 +28,7 @@
 	       			    <ul>
 					    <li><a href='index.php'>MENU</a></li>
 					    <li><a href='achatTickets.php'>TICKET</a></li>
-					    <li><a href='achatAbonnements.php'>ABONNEMENT</a></li>
+					    <li><a href='achatAbonnement.php'>ABONNEMENT</a></li>
 					    <li><a href='validation.php'>VALIDATION</a></li>
 					    <li><a href='statistiques.php'>STATISTIQUES</a></li>
 					    <li><a href='login.php'><i class='fa fa-user'></i></a></li>
@@ -44,11 +44,15 @@
 		<h1>Acheter un ticket...</h1>
 		<p>Select the type of ticket you want and the quantity needed right after.</p></br>
 		
-		<?php if(isset($_SESSION['id'])){ ?> 
+		<?php 
+		
+		extract($_POST);
+		
+		if(isset($_SESSION['id']) || isset($numcarte)){ ?> 
 		
 		<div class="row">
 		    <?php
-			$sql = "select * from ticket order by numtick asc;";
+			$sql = "select * from ticket where numtick>=0 order by numtick asc;";
 			$resultat = pg_query($sql);
 			$ligne=pg_fetch_array($resultat);
 			if (!$resultat) {
@@ -65,27 +69,19 @@
 			}
 			echo "</select>
 			<input type='number' class='red-btn' name='nombre' value='1' min='1'><br/><br/>
-			<input type='submit' class='red-btn' name='submit' value='Acheter'></form>";
+			<input type='submit' class='red-btn' name='submit' value='Acheter'>
+			<input type='hidden' name='numcarte' value=".$numcarte."></form>";
 			?>
 		   </p>
 		</div>
-		<?php } else {
-			echo "<form action='' method = 'post' name='carte'>
-			<label class='red-btn'>Selectionner votre numéro de carte anonyme :</label>
-			<input class='red-btn' type='text' placeholder='110200'>
-			<input class='red-btn' type='submit' value='Verifier'>
-			</form>";
-			echo "<p>Pas de carte ? <a href='achatTickets.php' class='red-btn'>Créez en une</a></p>";
-			
-			extract($_POST);
-	  		if(isset($carte)) {
-	  		  $result = pg_query($con,"select numu from utilisateur where nom is null and numu=".$carte[0]);
-	  		  echo $carte[0];
-	  		  $ligne = pg_fetch_array($result);
-	  		  echo "Session :".$_SESSION['id'] = ligne[0];
-	  		  echo "Get : ".$_GET['id'] = ligne[0];
-	  		}
-		} ?>
+		<?php 	} else {
+				echo "<form action='achatTickets.php' method = 'post' name='carte'>
+				<label class='red-btn'>Selectionner votre numéro de carte anonyme :</label>
+				<input class='red-btn' type='text' name='numcarte' placeholder='110200'>
+				<input class='red-btn' type='submit' value='Verifier'>
+				</form>";
+				echo "<form action = 'carteAnonyme.php' method='post' name='creationcarte'><p>Pas de carte ? <input type='submit' class='red-btn' name='submit' value='Créez en une'></p></form>";
+			} ?>
 	  </section>
 
 <!-- Footer -->

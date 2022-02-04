@@ -1,4 +1,4 @@
-	<?php
+<?php
 	session_start();
 	include("connexion.php");
 	$con=connect();
@@ -43,45 +43,9 @@
 
 	extract($_POST);
 	
-	if(isset($tickets) && (isset($_SESSION['id']) || isset($numcarte)) && isset($nombre)) {
+	if(isset($submit) && isset($_SESSION['id'])) {
 		
-		
-		$utilisateur = 0;
-		if (isset($_SESSION['id']))
-			$utilisateur = $_SESSION['id'];
-		else
-			$utilisateur = $numcarte;
-		$ligne=pg_fetch_array(pg_query("select * from tickcarte where numu=".$utilisateur." and numtick=".$tickets));
-		$nombretickets = 0;
-		$exists = false;
-		if(isset($ligne['quantite'])) {
-			$nombretickets = $ligne['quantite'];
-			$exists = true;
-		}
-		
-		$ligne=pg_fetch_array(pg_query("select * from ticket where numtick=".$tickets));
-		$libelle = $ligne['libelle'];
-		
-		$prix = $ligne['prix'];
-		$prix10 = $prix;
-		$dizaines = 0;
-		
-		if(isset($ligne['prix10'])) {
-			$prix10 = $ligne['prix10'];
-			$dizaines = $nombre;
-			$nombre = $nombre % 10;
-			$dizaines -= $nombre;
-			$dizaines /= 10;
-		}
-		
-		$prixtotal = $prix * $nombre + $prix10 * $dizaines;
-		
-		$nombretickets += $nombre;
-		$nombretickets += $dizaines;
-		$sql = "insert into tickcarte (\"numu\",\"numtick\",\"quantite\") values (".$utilisateur.",".$tickets.",".$nombretickets.")";
-		if($exists) {
-			$sql = "update tickcarte set quantite=".$nombretickets." where numu=".$utilisateur." and numtick=".$tickets;
-		}
+		$sql = "update utilisateur set numabo=null,datefinabo=null where numu=".$_SESSION['id'];
 		$resultat = pg_query($sql);
 		//(toujours)verifier que la requete a fonctionné
 		if (!$resultat) {
@@ -89,7 +53,7 @@
 			exit;
 		}
 		
-		echo "<h3>Vous avez dépensé ".sprintf('%.2f',$prixtotal)."€ pour acheter ".$dizaines.$nombre." ".$libelle."</h3>";
+		echo "<h3>Vous avez supprimé votre abonnement avec succès.</h3>";
 	}
 	
 ?>

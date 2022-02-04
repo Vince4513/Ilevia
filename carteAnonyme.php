@@ -1,4 +1,4 @@
-	<?php
+<?php
 	session_start();
 	include("connexion.php");
 	$con=connect();
@@ -36,62 +36,43 @@
 				    </ul>
 			</div>
 		</nav>
-    <h1>Ticket</h1>
+    <h1>Carte Anonyme</h1>
 	</section>
 <section class="course">
 <?php
 
 	extract($_POST);
 	
-	if(isset($tickets) && (isset($_SESSION['id']) || isset($numcarte)) && isset($nombre)) {
-		
-		
-		$utilisateur = 0;
-		if (isset($_SESSION['id']))
-			$utilisateur = $_SESSION['id'];
-		else
-			$utilisateur = $numcarte;
-		$ligne=pg_fetch_array(pg_query("select * from tickcarte where numu=".$utilisateur." and numtick=".$tickets));
-		$nombretickets = 0;
-		$exists = false;
-		if(isset($ligne['quantite'])) {
-			$nombretickets = $ligne['quantite'];
-			$exists = true;
-		}
-		
-		$ligne=pg_fetch_array(pg_query("select * from ticket where numtick=".$tickets));
-		$libelle = $ligne['libelle'];
-		
-		$prix = $ligne['prix'];
-		$prix10 = $prix;
-		$dizaines = 0;
-		
-		if(isset($ligne['prix10'])) {
-			$prix10 = $ligne['prix10'];
-			$dizaines = $nombre;
-			$nombre = $nombre % 10;
-			$dizaines -= $nombre;
-			$dizaines /= 10;
-		}
-		
-		$prixtotal = $prix * $nombre + $prix10 * $dizaines;
-		
-		$nombretickets += $nombre;
-		$nombretickets += $dizaines;
-		$sql = "insert into tickcarte (\"numu\",\"numtick\",\"quantite\") values (".$utilisateur.",".$tickets.",".$nombretickets.")";
-		if($exists) {
-			$sql = "update tickcarte set quantite=".$nombretickets." where numu=".$utilisateur." and numtick=".$tickets;
-		}
+	if(isset($submit)) {
+		$randomcard = rand();
+
+		$sql = "select count(*) from utilisateur where numu=".$randomcard;
 		$resultat = pg_query($sql);
-		//(toujours)verifier que la requete a fonctionné
 		if (!$resultat) {
 			echo "Probleme lors du lancement de la requête";
 			exit;
 		}
+		$ligne=pg_fetch_array($resultat);
 		
-		echo "<h3>Vous avez dépensé ".sprintf('%.2f',$prixtotal)."€ pour acheter ".$dizaines.$nombre." ".$libelle."</h3>";
+		while($ligne['count'] > 0) {
+			$randomcard = rand();
+			$sql = "select count(*) from utilisateur where numu=".$randomcard;
+			$ligne=pg_fetch_array(pg_query($sql));
+		}
+
+		$sql = "insert into utilisateur (numu) values (".$randomcard.")";
+		$resultat = pg_query($sql);
+		if (!$resultat) {
+			echo "Probleme lors du lancement de la requête";
+			exit;
+		}
+		$ligne=pg_fetch_array($resultat);
+		
+		echo "<h3>La carte numéro ".$randomcard." vous a été attribuée. N'oubliez pas ce numéro.</h3>";
+	} else {
+		echo "<h3>Création de carte déjà effectuée ou indisponible.</h3>";
 	}
-	
+
 ?>
     	<a class='red-btn' href="index.php">Menu</a>
     </section>

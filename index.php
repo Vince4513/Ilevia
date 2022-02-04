@@ -23,7 +23,7 @@ session_start();
 	       			    <ul>
 					    <li><a href='index.php'>MENU</a></li>
 					    <li><a href='achatTickets.php'>TICKET</a></li>
-					    <li><a href='achatAbonnements.php'>ABONNEMENT</a></li>
+					    <li><a href='achatAbonnement.php'>ABONNEMENT</a></li>
 					    <li><a href='validation.php'>VALIDATION</a></li>
 					    <li><a href='statistiques.php'>STATISTIQUES</a></li>
 					    <li><a href='login.php'><i class='fa fa-user'></i></a></li>
@@ -32,8 +32,8 @@ session_start();
 		</nav>
       
       <div class="text-box">
-        <h1>Gestion de la base</h1>
-        <p>Bienvenue sur notre site</p>
+        <h1>Projet BD Ilevia</h1>
+        <p>Vincent Réau - Arnaud Rougier</p>
         <a href="statistiques.php" class="hero-btn">Voir les statistiques</a>
       </div>
 	</section>

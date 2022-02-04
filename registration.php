@@ -71,24 +71,20 @@ if(isset($_POST['formInscription'])) {
           
           <div class="col-right">
             <div class="input-group">
-              <input type="text" name="datenaiss" id="datenaiss" value="<?php if(isset($dateNaiss)){echo $dateNaiss;}?>" required>
+              <input type="date" name="datenaiss" id="datenaiss" value="<?php if(isset($dateNaiss)){echo $dateNaiss;}?>" required>
               <label for="datenaiss">Date de naissance</label>
             </div>
             <div class="input-group">
-              <input type="text" name="caf" id="caf" value="<?php if(isset($caf)){echo $caf;} ?>" required>
+              <input type="number" min=0 max=3 title="QF1 : Quotient Familial CAF inférieur à 374€
+QF2 : Quotient Familial CAF de 375€ à 537€.
+QF3 : Quotient Familial CAF de 538€ à 716€." value=0 name="caf" id="caf" value="<?php if(isset($caf)){echo $caf;} ?>" required>
               <label for="caf">CAF</label>
             </div>
           </div>
         </div>
         <div align="center"><?php if(isset($erreur)){ echo $erreur; } ?></div>
         <input type="submit" value="Inscription" name="formInscription" class="submit-btn registration-btn">
-
-        <div class="link-col-r">
-          <a href="login.php" class="account">Déjà un compte ?</a>
-        </div>
-        <div class="link-col-r">
-          <a href="index.php" class="account">Menu</a>
-        </div>
+        <a href="login.php" class="account">Déjà inscrit.e?</a>
       </form>
     </div>
   </div>

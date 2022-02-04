@@ -57,7 +57,9 @@ if(isset($_SESSION['id'])){
                                 </div>
                                 <div class="col-right">
                                     <div class="input-group">
-                                        <input type="text" name="newCaf" value="<?php echo $userInfo['caf'];?>" />
+                                        <input type="number" name="newCaf" title="QF1 : Quotient Familial CAF inférieur à 374€
+QF2 : Quotient Familial CAF de 375€ à 537€.
+QF3 : Quotient Familial CAF de 538€ à 716€." min=0 max=3 value="<?php echo $userInfo['caf'];?>" />
                                         <label for="newCaf">CAF : </label>
                                     </div>
                                 </div>

@@ -14,9 +14,12 @@ else{
 	    $nameConnect = htmlspecialchars($_POST['loginUser']);
 	    $lastnameConnect = htmlspecialchars($_POST['loginPassword']);
 	    
-	    if(isset($nameConnect) AND isset($lastnameConnect)){
+	    if(isset($nameConnect)){
 		
 		$sql="SELECT * FROM utilisateur WHERE prenom ='".$lastnameConnect."' AND numu =".$nameConnect;
+		if($lastnameConnect=='')
+			$sql ="SELECT * FROM utilisateur WHERE prenom IS NULL AND numu =".$nameConnect;
+		echo $sql;
 		$resultat=pg_query($sql);
 
 		//(toujours)verifier que la requete a fonctionné
@@ -42,7 +45,7 @@ else{
 		}
 	    }
 	    else{
-		$erreur = "Tous les champs doivent être complétés !";
+		$erreur = "Numéro d'utilisateur non entré !";
 	    }
 	}
 }
@@ -62,16 +65,16 @@ else{
   <div class="header">
     <div class="login-wrapper">
       <form action="" class="form" method="POST">
-        <h2>Login</h2>
+        <h2>Connexion</h2>
         <div class="input-group">
           <input type="text" name="loginUser" id="loginUser" required>
           <label for="loginUser">Identifiant</label>
         </div>
         <div class="input-group">
-          <input type="password" name="loginPassword" id="loginPassword" required>
+          <input type="password" name="loginPassword" id="loginPassword">
           <label for="loginPassword">Prenom</label>
         </div>
-        <input type="submit" value="Login" name="formConnexion" class="submit-btn">
+        <input type="submit" value="Connexion" name="formConnexion" class="submit-btn">
         
         <div class="link-col-r">
           <a href="registration.php" class="account">Inscription</a>

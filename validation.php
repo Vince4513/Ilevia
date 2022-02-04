@@ -5,8 +5,14 @@
 include("connexion.php");
 $con=connect();
 
-if(isset($_SESSION['id'])){
-    $getId = intval($_SESSION['id']);
+extract($_POST);
+
+if(isset($_SESSION['id']) || isset($numcarte)){
+    $getId = 0;
+    if (isset($_SESSION['id']))
+	$getId = intval($_SESSION['id']);
+    else
+	$getId = $numcarte;
     $sql ="SELECT * FROM utilisateur WHERE numu =".$getId;
     $resultat=pg_query($sql);
     
@@ -62,7 +68,7 @@ if(isset($_SESSION['id'])){
 	       			    <ul>
 					    <li><a href='index.php'>MENU</a></li>
 					    <li><a href='achatTickets.php'>TICKET</a></li>
-					    <li><a href='achatAbonnements.php'>ABONNEMENT</a></li>
+					    <li><a href='achatAbonnement.php'>ABONNEMENT</a></li>
 					    <li><a href='validation.php'>VALIDATION</a></li>
 					    <li><a href='statistiques.php'>STATISTIQUES</a></li>
 					    <li><a href='login.php'><i class='fa fa-user'></i></a></li>
@@ -75,21 +81,26 @@ if(isset($_SESSION['id'])){
 <!------Course ------>
 
 <section class="course">
-  <h1>How to validate your ticket</h1>
-  <p>To do so, you need to be connected to your account. Then, you select a ticket and a station to validate your ticket.</p>
+  <h1>Valider un titre de transport</h1>
+  <p>Vous devez être connecté à votre compte ou possédez une carte anonyme. Ensuite, vous pourrez selectionnez une station, une borne et le ticket que vous souhaité sélectionner si vous n'avez pas d'abonnement pour enregistrer votre passage.</p>
 
-  <?php if(isset($_SESSION['id'])){ ?> 
+  <?php if(isset($_SESSION['id']) || isset($numcarte)) { ?> 
 
 	  <div class="row">
-	  <p><?php echo "<form method = 'post'>";
+	  <p><?php
+	  extract($_POST);
+	  if(!isset($station)) {
+	  	echo "<form method = 'post'>";
 	  	echo "<h3>Station</h3> <select class='red-btn' name = 'station'>";
 		while($ligne_Station) {
 			echo"<option value=".$ligne_Station['numstation'].",".$ligne_Station['numligne'].",".$ligne_Station['numtypeligne'].">".$ligne_Station['type']." - Ligne ".$ligne_Station['libelle']." - ".$ligne_Station['nom']."</option>";
 		$ligne_Station=pg_fetch_array($result1);
-		 }?>
-	    </select><br/><input class='red-btn' type='submit' name='submit' value='Valider'></form></p></div>
-	  <div class="row"><p>
-	  <?php extract($_POST);
+		 }
+	    echo "</select><br/><input class='red-btn' type='submit' name='submit' value='Valider'>";
+	    if(isset($numcarte))
+		    echo "<input type='hidden' name='numcarte' value='".$numcarte."'>";
+	    echo "</form></p></div><div class=\"row\"><p>";
+	    }
 	  	if(isset($station)) {
 			$possedeticket = pg_fetch_array(pg_query("select count(*) from ticket natural join tickcarte where numu=".$userInfo['numu']))['count'] > 0;
 			$possedeabonnement = pg_fetch_array(pg_query("select count(numabo) from utilisateur where numabo is not null and numu=".$userInfo['numu']))['count'] > 0;
@@ -128,8 +139,9 @@ if(isset($_SESSION['id'])){
 					
 					echo "<h3>Ticket à utiliser</h3> <form method = 'post'><select class='red-btn' name = 'ticket'>";
 					while($ligne) {
-						if($ligne['numtick'] == 5 and hour > 19) {
-							echo"<option value=5>".$ligne['libelle']." - Utilisable jusqu'à la fin de service sur l'ensemble du réseau bus, métro et tram</option>";
+						if($ligne['numtick'] == 5) {
+							if(hour >= 19)
+								echo"<option value=5>".$ligne['libelle']." - Utilisable jusqu'à la fin de service sur l'ensemble du réseau bus, métro et tram</option>";
 						} 
 						else {
 							echo"<option value=".$ligne['numtick'].">".$ligne['libelle']." - Disponible ".$ligne['tempsvalide']."h</option>";
@@ -138,7 +150,10 @@ if(isset($_SESSION['id'])){
 					}
 			 		echo "</select>";
 		 		}
-		 		echo "<input class='red-btn' type='submit' name='submit' value='Valider'></form>";
+		 		echo "<input class='red-btn' type='submit' name='submit' value='Valider'>";
+		 		if(isset($numcarte))
+			 		echo "<input type='hidden' name='numcarte' value=".$numcarte.">";
+			 	echo "</form>";
 			 }
 			 else {
 			 	echo "<p>Vous n'avez plus de tickets. Veuillez en acheter sur la <a class='red-btn' href=\"achatTickets.php\">page d'achat</a></p>";
@@ -167,10 +182,11 @@ if(isset($_SESSION['id'])){
 			
 			$sql = "insert into validation (\"numu\",\"numbv\",\"numstation\", \"typetransport\",\"datevalidation\") values (".$vl[0].",".$vl[1].",".$vl[2].",".$vl[3].",now())";
 			if(!$validationRecente){
-				$numtick = $ticket;
-				if($possedeAbonnement) {
+				$numtick = 0;
+				if($possedeAbonnement)
 					$numtick = -1;
-				}
+				else
+					$numtick = $ticket;
 				$sql = "insert into validation (\"numu\",\"numbv\",\"numstation\", \"typetransport\",\"datevalidation\",\"numtick\") values (".$vl[0].",".$vl[1].",".$vl[2].",".$vl[3].",now(), ".$numtick.")";
 			}
 			$resultat = pg_query($sql);
@@ -184,6 +200,12 @@ if(isset($_SESSION['id'])){
 				$sql = "update tickcarte set quantite=quantite-1 where numu=".$vl[0]." and numtick=".$numtick;
 				$resultat = pg_query($sql);
 				//(toujours)verifier que la requete a fonctionné
+				if (!$resultat) {
+					echo "Probleme lors du lancement de la requête";
+					exit;
+				}
+				$sql = "delete from tickcarte where quantite<=0";
+				$resultat = pg_query($sql);
 				if (!$resultat) {
 					echo "Probleme lors du lancement de la requête";
 					exit;
@@ -207,7 +229,14 @@ if(isset($_SESSION['id'])){
 			echo "</p></div><div class='row'><p><h3>Validation effectuée</h3></p></div>";
 		}?>
 		
-	<?php } ?>
+	<?php 	} else {
+			echo "<form action='validation.php' method = 'post' name='carte'>
+			<label class='red-btn'>Selectionner votre numéro de carte anonyme :</label>
+			<input class='red-btn' type='text' name='numcarte' placeholder='110200'>
+			<input class='red-btn' type='submit' value='Verifier'>
+			</form>";
+			echo "<form action = 'carteAnonyme.php' method='post' name='creationcarte'><p>Pas de carte ? <input type='submit' class='red-btn' name='submit' value='Créez en une'></p></form>";
+			} ?>
   
 </section>
 

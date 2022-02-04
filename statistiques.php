@@ -7,7 +7,7 @@ $con=connect();
 
 /************************************* Nombre d'utilisateurs ***************************************/
 // Prépare une requête pour l'exécution
-$result0 = pg_query($con,'SELECT * FROM utilisateur');
+$result0 = pg_query($con,'SELECT * FROM utilisateur where nom is not null');
 
 if (!$result0){ 
 	echo "Probleme lors du lancement de la requete";
@@ -90,7 +90,7 @@ $rows_Repartition=pg_fetch_array($result5);
 	       			    <ul>
 					    <li><a href='index.php'>MENU</a></li>
 					    <li><a href='achatTickets.php'>TICKET</a></li>
-					    <li><a href='achatAbonnements.php'>ABONNEMENT</a></li>
+					    <li><a href='achatAbonnement.php'>ABONNEMENT</a></li>
 					    <li><a href='validation.php'>VALIDATION</a></li>
 					    <li><a href='statistiques.php'>STATISTIQUES</a></li>
 					    <li><a href='login.php'><i class='fa fa-user'></i></a></li>
